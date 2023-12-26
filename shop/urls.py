@@ -3,9 +3,9 @@ from django.urls import path
 from .views import *
 
 urlpatterns = [
-    path('posts/', posts, name='posts'),
-    path('posts/add/', add_post, name='add_post'),
-    path('posts/<int:post_id>/edit/', edit_post, name='edit_post'),
+    # path('posts/', posts, name='posts'),
+    # path('posts/add/', add_post, name='add_post'),
+    # path('posts/<int:post_id>/edit/', edit_post, name='edit_post'),
     path('posts/<int:post_id>/delete/', delete_post, name='delete_post'),
 
     path('posts/popular/', popular_posts, name='popular_posts'),
@@ -13,6 +13,10 @@ urlpatterns = [
     path('posts/<int:post_id>/', post_details, name='post_details'),
     path('posts/<int:post_id>/comments/', post_comments, name='post_comments'),
     path('posts/<int:post_id>/likes/', post_likes, name='post_likes'),
+
+    path('posts/', PostListView.as_view(), name='posts'),
+    path('posts/add/', AddPostView.as_view(), name='add_post'),
+    path('posts/<int:post_id>/edit/', EditPostView.as_view(), name='edit_post'),
 
     path('', home, name='home'),
     path('about/', about, name='about'),

@@ -1,7 +1,76 @@
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
+from django.views import View
 
 from .models import Post, Category, Publisher, Author
+
+
+class PostListView(View):
+    def get(self, request):
+        posts = Post.objects.all()
+        authors = Author.objects.all()
+        return render(request, 'posts.html', {'posts': posts, 'authors': authors})
+
+
+class AddPostView(View):
+    def get(self, request):
+        categories = Category.objects.all()
+        authors = Author.objects.all()
+        publishers = Publisher.objects.all()
+        return render(request, 'add_post.html',
+                      {'categories': categories, 'authors': authors, 'publishers': publishers})
+
+    def post(self, request):
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+        category_id = request.POST.get('category')
+        publisher_id = request.POST.get('publisher')
+        authors_ids = request.POST.getlist('authors')
+
+        category = Category.objects.get(id=category_id)
+        publisher = Publisher.objects.get(id=publisher_id)
+        post = Post(title=title, content=content, category=category, publisher=publisher)
+        post.save()
+
+        for author_id in authors_ids:
+            author = Author.objects.get(id=author_id)
+            post.authors.add(author)
+
+        return redirect('posts')
+
+
+class EditPostView(View):
+    def get(self, request, post_id):
+        post = Post.objects.get(id=post_id)
+        categories = Category.objects.all()
+        authors = Author.objects.all()
+        publishers = Publisher.objects.all()
+        return render(request, 'edit_post.html',
+                      {'post': post, 'categories': categories, 'authors': authors, 'publishers': publishers})
+
+    def post(self, request, post_id):
+        post = Post.objects.get(id=post_id)
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+        category_id = request.POST.get('category')
+        publisher_id = request.POST.get('publisher')
+        authors_ids = request.POST.getlist('authors')
+
+        category = Category.objects.get(id=category_id)
+        publisher = Publisher.objects.get(id=publisher_id)
+
+        post.title = title
+        post.content = content
+        post.category = category
+        post.publisher = publisher
+        post.authors.clear()
+
+        for author_id in authors_ids:
+            author = Author.objects.get(id=author_id)
+            post.authors.add(author)
+
+        post.save()
+        return redirect('posts')
 
 
 def posts(request):
