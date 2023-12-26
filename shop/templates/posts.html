@@ -1,0 +1,27 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Posts</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}" type="text/css">
+</head>
+<body>
+    {% for post in posts %}
+        <h2>{{ post.title }}</h2>
+        <p>{{ post.content }}</p>
+        <p>Категория: {{ post.category.name }}</p>
+        {% for author in authors %}
+            <p>Автор: {{ author.name }}</p>
+        {% endfor %}
+
+        <a href="{% url 'edit_post' post.id %}">Редактировать</a>
+        <a href="{% url 'delete_post' post.id %}">Удалить</a>
+    {% endfor %}
+    <a href="{% url 'add_post' %}">Добавить пост</a>
+
+</body>
+</html>
